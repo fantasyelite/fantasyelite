@@ -1,122 +1,128 @@
-
 /* ===========================
    FANTASY ELITE — JavaScript
    =========================== */
 
 document.addEventListener('DOMContentLoaded', () => {
 
-    // === Age Verification Gate ===
-    const ageGate = document.getElementById('ageGate');
-    const ageAccept = document.getElementById('ageAccept');
-    const ageDeny = document.getElementById('ageDeny');
+    // === Verificación de Edad ===
+    const puertaEdad = document.getElementById('puertaEdad');
+    const aceptarEdad = document.getElementById('aceptarEdad');
+    const denegarEdad = document.getElementById('denegarEdad');
 
-    // Check if already verified this session
-    if (sessionStorage.getItem('ageVerified') === 'true') {
-        ageGate.classList.add('hidden');
+    // Comprobar si ya se verificó en esta sesión
+    if (sessionStorage.getItem('edadVerificada') === 'true') {
+        puertaEdad.classList.add('hidden'); // hidden puede mantenerse ya que es una clase utilitaria genérica, pero la cambiaremos a oculta en CSS si es necesario. (Mejor usar 'oculto')
         document.body.style.overflow = '';
     } else {
         document.body.style.overflow = 'hidden';
     }
 
-    ageAccept.addEventListener('click', () => {
-        sessionStorage.setItem('ageVerified', 'true');
-        ageGate.classList.add('hidden');
+    aceptarEdad.addEventListener('click', () => {
+        sessionStorage.setItem('edadVerificada', 'true');
+        puertaEdad.classList.add('oculto');
         document.body.style.overflow = '';
     });
 
-    ageDeny.addEventListener('click', () => {
+    denegarEdad.addEventListener('click', () => {
         window.location.href = 'https://www.google.com';
     });
 
-    // === Preloader ===
-    const preloader = document.getElementById('preloader');
+    // === Precargador ===
+    const precargador = document.getElementById('precargador');
     window.addEventListener('load', () => {
         setTimeout(() => {
-            preloader.classList.add('hidden');
+            precargador.classList.add('oculto');
         }, 800);
     });
-    // Fallback if load already fired
+    // Respaldo si la carga ya se completó
     if (document.readyState === 'complete') {
-        setTimeout(() => preloader.classList.add('hidden'), 800);
+        setTimeout(() => precargador.classList.add('oculto'), 800);
     }
 
-    // === Navbar Scroll ===
-    const navbar = document.getElementById('navbar');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const sections = document.querySelectorAll('.section, .hero');
+    // === Scroll de la Barra de Navegación ===
+    const barraNavegacion = document.getElementById('barraNavegacion');
+    const enlacesNavegacion = document.querySelectorAll('.enlace-navegacion');
+    const secciones = document.querySelectorAll('.seccion, .portada');
 
-    function handleScroll() {
+    function manejarScroll() {
         const scrollY = window.scrollY;
 
-        // Navbar background
+        // Fondo de la barra
         if (scrollY > 80) {
-            navbar.classList.add('scrolled');
+            barraNavegacion.classList.add('scrolled'); // Cambiaremos scrolled a con-scroll en CSS
         } else {
-            navbar.classList.remove('scrolled');
+            barraNavegacion.classList.remove('con-scroll');
+            // Aseguramos remover la clase anterior por si acaso
+            barraNavegacion.classList.remove('scrolled'); 
+        }
+        
+        // Agregar la clase de scroll español (hacer ambos para compatibilidad temporal si no se renombra bien en CSS)
+        if (scrollY > 80) {
+            barraNavegacion.classList.add('con-scroll');
         }
 
-        // Active nav link
-        let current = '';
-        sections.forEach(section => {
-            const sectionTop = section.offsetTop - 120;
-            if (scrollY >= sectionTop) {
-                current = section.getAttribute('id');
+        // Enlace activo
+        let actual = '';
+        secciones.forEach(seccion => {
+            const topeSeccion = seccion.offsetTop - 120;
+            if (scrollY >= topeSeccion) {
+                actual = seccion.getAttribute('id');
             }
         });
-        navLinks.forEach(link => {
-            link.classList.remove('active');
-            if (link.getAttribute('href') === `#${current}`) {
-                link.classList.add('active');
+        enlacesNavegacion.forEach(enlace => {
+            enlace.classList.remove('activo');
+            if (enlace.getAttribute('href') === `#${actual}`) {
+                enlace.classList.add('activo');
             }
         });
     }
-    window.addEventListener('scroll', handleScroll);
-    handleScroll();
+    window.addEventListener('scroll', manejarScroll);
+    manejarScroll();
 
-    // === Mobile Menu ===
-    const navToggle = document.getElementById('navToggle');
-    const navMenu = document.getElementById('navMenu');
+    // === Menú Móvil ===
+    const botonNavegacion = document.getElementById('botonNavegacion');
+    const menuNavegacion = document.getElementById('menuNavegacion');
 
-    navToggle.addEventListener('click', () => {
-        navToggle.classList.toggle('active');
-        navMenu.classList.toggle('active');
-        document.body.style.overflow = navMenu.classList.contains('active') ? 'hidden' : '';
+    botonNavegacion.addEventListener('click', () => {
+        botonNavegacion.classList.toggle('activo');
+        menuNavegacion.classList.toggle('activo');
+        document.body.style.overflow = menuNavegacion.classList.contains('activo') ? 'hidden' : '';
     });
 
-    navLinks.forEach(link => {
-        link.addEventListener('click', () => {
-            navToggle.classList.remove('active');
-            navMenu.classList.remove('active');
+    enlacesNavegacion.forEach(enlace => {
+        enlace.addEventListener('click', () => {
+            botonNavegacion.classList.remove('activo');
+            menuNavegacion.classList.remove('activo');
             document.body.style.overflow = '';
         });
     });
 
-    // === Smooth Scroll ===
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', (e) => {
+    // === Scroll Suave ===
+    document.querySelectorAll('a[href^="#"]').forEach(ancla => {
+        ancla.addEventListener('click', (e) => {
             e.preventDefault();
-            const target = document.querySelector(anchor.getAttribute('href'));
-            if (target) {
-                const offsetTop = target.offsetTop - 80;
+            const destino = document.querySelector(ancla.getAttribute('href'));
+            if (destino) {
+                const topeOffset = destino.offsetTop - 80;
                 window.scrollTo({
-                    top: offsetTop,
+                    top: topeOffset,
                     behavior: 'smooth'
                 });
             }
         });
     });
 
-    // === Scroll Reveal Animation ===
-    const revealElements = document.querySelectorAll('.reveal-up, .reveal-left, .reveal-right');
+    // === Animación de Revelado al hacer Scroll ===
+    const elementosRevelar = document.querySelectorAll('.revelar-arriba, .revelar-izq, .revelar-der');
     
-    const revealObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const delay = entry.target.dataset.delay || 0;
+    const observadorRevelar = new IntersectionObserver((entradas) => {
+        entradas.forEach(entrada => {
+            if (entrada.isIntersecting) {
+                const retardo = entrada.target.dataset.delay || 0;
                 setTimeout(() => {
-                    entry.target.classList.add('revealed');
-                }, parseInt(delay));
-                revealObserver.unobserve(entry.target);
+                    entrada.target.classList.add('revelado');
+                }, parseInt(retardo));
+                observadorRevelar.unobserve(entrada.target);
             }
         });
     }, {
@@ -124,160 +130,168 @@ document.addEventListener('DOMContentLoaded', () => {
         rootMargin: '0px 0px -50px 0px'
     });
 
-    revealElements.forEach(el => revealObserver.observe(el));
+    elementosRevelar.forEach(el => observadorRevelar.observe(el));
 
-    // === Animated Counter ===
-    const statNumbers = document.querySelectorAll('.stat-number');
+    // === Contador Animado ===
+    const numerosEstadistica = document.querySelectorAll('.numero-estadistica');
     
-    const counterObserver = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                const target = parseInt(entry.target.dataset.target);
-                animateCounter(entry.target, target);
-                counterObserver.unobserve(entry.target);
+    const observadorContador = new IntersectionObserver((entradas) => {
+        entradas.forEach(entrada => {
+            if (entrada.isIntersecting) {
+                const objetivo = parseInt(entrada.target.dataset.target);
+                animarContador(entrada.target, objetivo);
+                observadorContador.unobserve(entrada.target);
             }
         });
     }, { threshold: 0.5 });
 
-    statNumbers.forEach(num => counterObserver.observe(num));
+    numerosEstadistica.forEach(num => observadorContador.observe(num));
 
-    function animateCounter(element, target) {
-        const duration = 2000;
-        const startTime = performance.now();
+    function animarContador(elemento, objetivo) {
+        const duracion = 2000;
+        const tiempoInicio = performance.now();
         
-        function update(currentTime) {
-            const elapsed = currentTime - startTime;
-            const progress = Math.min(elapsed / duration, 1);
+        function actualizar(tiempoActual) {
+            const transcurrido = tiempoActual - tiempoInicio;
+            const progreso = Math.min(transcurrido / duracion, 1);
             
-            // Ease out quad
-            const eased = 1 - (1 - progress) * (1 - progress);
-            const current = Math.floor(eased * target);
+            // Suavizado de salida (Ease out quad)
+            const suavizado = 1 - (1 - progreso) * (1 - progreso);
+            const actual = Math.floor(suavizado * objetivo);
             
-            element.textContent = current;
+            elemento.textContent = actual;
             
-            if (progress < 1) {
-                requestAnimationFrame(update);
+            if (progreso < 1) {
+                requestAnimationFrame(actualizar);
             }
         }
-        requestAnimationFrame(update);
+        requestAnimationFrame(actualizar);
     }
 
-    // === Form Handling ===
-    const customForm = document.getElementById('customForm');
-    const contactForm = document.getElementById('contactForm');
-    const successModal = document.getElementById('successModal');
-    const closeModal = document.getElementById('closeModal');
+    // === Manejo de Formularios (Formspree Fetch) ===
+    const formularioPersonalizado = document.getElementById('formularioPersonalizado');
+    const formularioContacto = document.getElementById('formularioContacto');
+    const modalExito = document.getElementById('modalExito');
+    const cerrarModal = document.getElementById('cerrarModal');
+    const FORMSPREE_URL = "https://formspree.io/f/xdabparq";
 
-    function showModal() {
-        successModal.classList.add('active');
+    function mostrarModal() {
+        modalExito.classList.add('activo');
         document.body.style.overflow = 'hidden';
     }
 
-    function hideModal() {
-        successModal.classList.remove('active');
+    function ocultarModal() {
+        modalExito.classList.remove('activo');
         document.body.style.overflow = '';
     }
 
-    closeModal.addEventListener('click', hideModal);
-    successModal.addEventListener('click', (e) => {
-        if (e.target === successModal) hideModal();
+    cerrarModal.addEventListener('click', ocultarModal);
+    modalExito.addEventListener('click', (e) => {
+        if (e.target === modalExito) ocultarModal();
     });
 
-    // Custom Fantasy Form
-    customForm.addEventListener('submit', (e) => {
+    // Función genérica para manejar el envío
+    async function manejarEnvioFormulario(e, formulario) {
         e.preventDefault();
         
-        // Get form data
-        const formData = new FormData(customForm);
-        const data = Object.fromEntries(formData);
-        
-        // Validate consent
-        if (!document.getElementById('consent').checked) {
+        // Comprobar consentimiento de edad específico para cada formulario
+        const checkConsentimiento = formulario.id === 'formularioPersonalizado' ? 
+                                  document.getElementById('consent') : 
+                                  document.getElementById('cAge');
+                                  
+        if (!checkConsentimiento.checked) {
             alert('Debes confirmar que eres mayor de edad.');
             return;
         }
 
-        // Simulate sending (replace with actual backend)
-        const submitBtn = customForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Enviando...</span>';
-        submitBtn.disabled = true;
+        const btnEnvio = formulario.querySelector('button[type="submit"]');
+        const textoOriginal = btnEnvio.innerHTML;
+        btnEnvio.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Enviando...</span>';
+        btnEnvio.disabled = true;
 
-        setTimeout(() => {
-            showModal();
-            customForm.reset();
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }, 1500);
-    });
+        const formData = new FormData(formulario);
+        // Añadir una etiqueta para identificar de qué formulario viene
+        formData.append('_subject', formulario.id === 'formularioPersonalizado' ? 'Nueva Solicitud de Fantasía' : 'Nuevo Mensaje de Contacto');
 
-    // Contact Form
-    contactForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        
-        if (!document.getElementById('cAge').checked) {
-            alert('Debes confirmar que eres mayor de edad.');
-            return;
+        try {
+            const respuesta = await fetch(FORMSPREE_URL, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+
+            if (respuesta.ok) {
+                mostrarModal();
+                formulario.reset();
+            } else {
+                alert("Hubo un problema al enviar el formulario. Por favor, inténtalo de nuevo.");
+            }
+        } catch (error) {
+            console.error("Error al enviar formspree:", error);
+            alert("Error de red. Verifica tu conexión e inténtalo de nuevo.");
+        } finally {
+            btnEnvio.innerHTML = textoOriginal;
+            btnEnvio.disabled = false;
         }
+    }
 
-        const submitBtn = contactForm.querySelector('button[type="submit"]');
-        const originalText = submitBtn.innerHTML;
-        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> <span>Enviando...</span>';
-        submitBtn.disabled = true;
+    // Formulario de Fantasía Personalizada
+    if (formularioPersonalizado) {
+        formularioPersonalizado.addEventListener('submit', (e) => manejarEnvioFormulario(e, formularioPersonalizado));
+    }
 
-        setTimeout(() => {
-            showModal();
-            contactForm.reset();
-            submitBtn.innerHTML = originalText;
-            submitBtn.disabled = false;
-        }, 1500);
-    });
+    // Formulario de Contacto
+    if (formularioContacto) {
+        formularioContacto.addEventListener('submit', (e) => manejarEnvioFormulario(e, formularioContacto));
+    }
 
-    // === Parallax Hero Image ===
-    const heroBgImg = document.querySelector('.hero-bg-img');
+    // === Imagen Hero Parallax ===
+    const imgFondoPortada = document.querySelector('.img-fondo-portada');
     
-    if (heroBgImg && window.innerWidth > 768) {
+    if (imgFondoPortada && window.innerWidth > 768) {
         window.addEventListener('scroll', () => {
-            const scrolled = window.scrollY;
-            if (scrolled < window.innerHeight) {
-                heroBgImg.style.transform = `scale(${1.05 + scrolled * 0.0003}) translateY(${scrolled * 0.15}px)`;
+            const scroleado = window.scrollY;
+            if (scroleado < window.innerHeight) {
+                imgFondoPortada.style.transform = `scale(${1.05 + scroleado * 0.0003}) translateY(${scroleado * 0.15}px)`;
             }
         }, { passive: true });
     }
 
-    // === Service Cards - Tilt Effect ===
-    const serviceCards = document.querySelectorAll('.service-card');
+    // === Tarjetas de Servicio - Efecto Inclinación (Tilt) ===
+    const tarjetasServicio = document.querySelectorAll('.tarjeta-servicio');
     
     if (window.innerWidth > 768) {
-        serviceCards.forEach(card => {
-            card.addEventListener('mousemove', (e) => {
-                const rect = card.getBoundingClientRect();
+        tarjetasServicio.forEach(tarjeta => {
+            tarjeta.addEventListener('mousemove', (e) => {
+                const rect = tarjeta.getBoundingClientRect();
                 const x = e.clientX - rect.left;
                 const y = e.clientY - rect.top;
-                const centerX = rect.width / 2;
-                const centerY = rect.height / 2;
-                const rotateX = (y - centerY) / 20;
-                const rotateY = (centerX - x) / 20;
+                const centroX = rect.width / 2;
+                const centroY = rect.height / 2;
+                const rotarX = (y - centroY) / 20;
+                const rotarY = (centroX - x) / 20;
                 
-                card.style.transform = `translateY(-4px) perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+                tarjeta.style.transform = `translateY(-4px) perspective(1000px) rotateX(${rotarX}deg) rotateY(${rotarY}deg)`;
             });
             
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'translateY(0) perspective(1000px) rotateX(0) rotateY(0)';
+            tarjeta.addEventListener('mouseleave', () => {
+                tarjeta.style.transform = 'translateY(0) perspective(1000px) rotateX(0) rotateY(0)';
             });
         });
     }
 
-    // === Keyboard - Close menu on Escape ===
+    // === Teclado - Cerrar menú/modal con Escape ===
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            if (navMenu.classList.contains('active')) {
-                navToggle.classList.remove('active');
-                navMenu.classList.remove('active');
+            if (menuNavegacion.classList.contains('activo')) {
+                botonNavegacion.classList.remove('activo');
+                menuNavegacion.classList.remove('activo');
                 document.body.style.overflow = '';
             }
-            if (successModal.classList.contains('active')) {
-                hideModal();
+            if (modalExito.classList.contains('activo')) {
+                ocultarModal();
             }
         }
     });
