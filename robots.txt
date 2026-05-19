@@ -1,0 +1,12 @@
+# robots.txt — Fantasy Elite
+# Permite que todos los bots de búsqueda indexen el sitio
+
+User-agent: *
+Allow: /
+
+# Bloquear acceso a archivos internos
+Disallow: /.git/
+Disallow: /.DS_Store
+
+# Ubicación del Sitemap
+Sitemap: https://www.fantasy-elite.com/sitemap.xml
